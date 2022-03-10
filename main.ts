@@ -48,7 +48,7 @@ radio.onReceivedValue(function (name, value) {
         serial.writeValue("high", value)
     } else if (name == "low") {
         serial.writeValue("low", value)
-    } else if (parseInt(name)) {
+    } else if (parseInt(name)>=0) {
         playerNumber = parseInt(name)
         results[playerNumber] = value
     }
@@ -56,6 +56,7 @@ radio.onReceivedValue(function (name, value) {
 
 function countResults () {
     numberOfResults = 0
+    resultSum = 0
     for (let j = 0; j <= numberOfPlayers - 1; j++) {
         resultSum += results[j]
         if (results[j] > 0) {
@@ -77,7 +78,7 @@ function countResults () {
     }
 }
 
-basic.clearScreen()
+//basic.clearScreen()
 //countLeds(30)
 
 function countLeds(num: number){
