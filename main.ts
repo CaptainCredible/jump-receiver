@@ -5,7 +5,7 @@ let playerNumber = 0
 let numberOfResults = 0
 let resultSum = 0
 let results = [0]
-let numberOfPlayers = 10
+let numberOfPlayers = 3
 
 for (let i = 0; i <= numberOfPlayers - 1; i++) {
     results[i] = 0
@@ -80,6 +80,15 @@ function countResults () {
 
 //basic.clearScreen()
 //countLeds(30)
+
+function showMissing(){
+    for(let i = 0; i<numberOfPlayers; i++){
+        if(results[i] > 0){
+            led.plot(i % 5, i / 5)
+        }
+    }
+}
+
 
 function countLeds(num: number){
     for(let i = 0; i<num; i++){
