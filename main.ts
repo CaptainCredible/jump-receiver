@@ -8,7 +8,7 @@ let numberOfRealResults = 0
 let results = [0]
 let numberOfPlayers = 20
 let wasAB = false
-basic.showIcon(IconNames.Square)
+basic.showIcon(IconNames.Triangle)
 radio.setGroup(1)
 
 function fillEmptyWithAverage () {
@@ -29,22 +29,22 @@ function fillEmptyWithAverage () {
 
 input.onButtonPressed(Button.A, function () {
     basic.showString("R", 0)
-for (let index = 0; index <= numberOfPlayers - 1; index++) {
+    for (let index = 0; index <= numberOfPlayers - 1; index++) {
         numberOfRealResults = 0
         results[index] = 0
         radio.sendValue("reset", 0)
         basic.pause(30)
         led.toggleAll()
     }
-    let playerNumber = 0
+    playerNumber = 0
     resultSum = 0
     numberOfResults = 0
     averageResult = 0
     sumResultsForAvg = 0
     numberOfRealResults = 0
-
     basic.showString("R", 0)
 })
+
 function showMissing () {
     for (let m = 0; m <= numberOfPlayers - 1; m++) {
         if (results[m] > 0) {
@@ -77,32 +77,45 @@ function countResults () {
         showMissing()
     }
 }
-input.onButtonPressed(Button.B, function () {
-    basic.showIcon(IconNames.No, 0)
-for (let index = 0; index < 20; index++) {
-        radio.sendValue("stop", 0)
-        led.toggleAll()
-basic.pause(30)
-    }
-    basic.pause(500)
-    basic.showIcon(IconNames.Ghost)
-})
+
+
+
+
 radio.onReceivedValue(function (name, value) {
-    if (name == "avg") {
-        serial.writeValue("avg", value)
-    } else if (name == "high") {
-        serial.writeValue("high", value)
-    } else if (name == "low") {
-        serial.writeValue("low", value)
-    } else if (parseInt(name) >= 0) {
+    if (parseInt(name) >= 0) {
         playerNumber = parseInt(name)
         results[playerNumber] = value
+    } else if(name == "reset"){
+        basic.showString("R", 0)
+        for (let index = 0; index <= numberOfPlayers - 1; index++) {
+            numberOfRealResults = 0
+            results[index] = 0
+            basic.pause(30)
+            led.toggleAll()
+        }
+        playerNumber = 0
+        resultSum = 0
+        numberOfResults = 0
+        averageResult = 0
+        sumResultsForAvg = 0
+        numberOfRealResults = 0
+        basic.showString("R", 0)
     }
 })
-input.onLogoEvent(TouchButtonEvent.Pressed, function () {
-    radio.sendValue("count", 0)
-    basic.pause(250)
-    countResults()
+
+let isCounting = false
+input.onButtonPressed(Button.B, function () {
+    if(!isCounting){
+        
+        music.playTone(1880, 200)
+        //basic.pause(200)
+        isCounting = true
+        radio.sendValue("count", 0)
+        basic.pause(500)
+        countResults()
+    }
+    isCounting = false
+    
 })
 function countLeds (num: number) {
     for (let n = 0; n <= num - 1; n++) {
@@ -113,7 +126,21 @@ function countLeds (num: number) {
 for (let k = 0; k <= numberOfPlayers - 1; k++) {
     results[k] = 0
 }
+
+let wasB = false
+
 loops.everyInterval(1000, function () {
+    if(input.buttonIsPressed(Button.B)){
+        if(!wasB){
+            radio.sendValue("debug",0)
+            soundExpression.hello.play()
+            basic.showString("D")
+        }
+        wasB = true
+    } else {
+        wasB = false
+    }
+    
     if (input.logoIsPressed()) {
         if (wasTouched) {
             fillEmptyWithAverage()
